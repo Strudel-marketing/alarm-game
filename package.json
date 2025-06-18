@@ -1,0 +1,16 @@
+{
+    "name": "alarm-game-server-prog",
+    "version": "1.0.0",
+    "main": "server-prog.js",
+    "scripts": {
+      "start": "node server-prog.js",
+      "dev": "nodemon server-prog.js"
+    },
+    "dependencies": {
+      "express": "^4.18.2",
+      "cors": "^2.8.5",
+      "axios": "^1.6.0",
+      "node-cron": "^3.0.2",
+      "socket.io": "^4.6.1"
+    }
+  }
