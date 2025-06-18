@@ -1,1 +1,1167 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>משחק ניחוש האזעקות 🚨</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #5a67d8;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .emoji-header {
+            text-align: center;
+            font-size: 3em;
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Navigation */
+        .nav-tabs {
+            display: flex;
+            background: #f7fafc;
+            border-radius: 15px;
+            padding: 5px;
+            margin-bottom: 30px;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            background: transparent;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+            color: #718096;
+        }
+
+        .nav-tab.active {
+            background: #5a67d8;
+            color: white;
+            box-shadow: 0 2px 8px rgba(90, 103, 216, 0.3);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Date selector */
+        .date-selector {
+            background: #e6fffa;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .date-selector input[type="date"] {
+            padding: 10px 20px;
+            border: 2px solid #4fd1c5;
+            border-radius: 8px;
+            font-size: 1.1em;
+            margin: 0 10px;
+        }
+
+        /* Player forms */
+        .player-form {
+            background: #f7fafc;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .player-form:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .player-name {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #5a67d8;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #4a5568;
+        }
+
+        select, input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #cbd5e0;
+            border-radius: 8px;
+            font-size: 1em;
+            background: white;
+            transition: border-color 0.3s;
+        }
+
+        select:focus, input[type="text"]:focus {
+            outline: none;
+            border-color: #5a67d8;
+        }
+
+        .time-location-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        /* Settings */
+        .settings-section {
+            background: #f7fafc;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .settings-section h3 {
+            color: #4a5568;
+            margin-bottom: 20px;
+        }
+
+        .location-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+        }
+
+        .location-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .location-item label {
+            margin: 0;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        /* History & Leaderboard */
+        .history-item, .leaderboard-item {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .history-date {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #5a67d8;
+            margin-bottom: 10px;
+        }
+
+        .winner-info {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            background: #c6f6d5;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 20px;
+        }
+
+        .rank {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #5a67d8;
+            width: 40px;
+        }
+
+        .player-info {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .player-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            background: #e6fffa;
+        }
+
+        .total-score {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #48bb78;
+        }
+
+        /* Buttons */
+        .btn {
+            background: #5a67d8;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1.2em;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .btn:hover {
+            background: #4c51bf;
+            transform: scale(1.05);
+        }
+
+        .btn:disabled {
+            background: #a0aec0;
+            cursor: not-allowed;
+            transform: scale(1);
+        }
+
+        .btn-secondary {
+            background: #48bb78;
+        }
+
+        .btn-secondary:hover {
+            background: #38a169;
+        }
+
+        .btn-danger {
+            background: #fc8181;
+            padding: 5px 10px;
+            font-size: 0.9em;
+            width: auto;
+            margin: 0;
+        }
+
+        .btn-danger:hover {
+            background: #f56565;
+        }
+
+        /* Alerts display */
+        .alert-display {
+            background: #fed7d7;
+            border: 2px solid #fc8181;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .alert-item {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            font-size: 1.2em;
+            color: #5a67d8;
+            margin: 20px 0;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #5a67d8;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #a0aec0;
+        }
+
+        .empty-state-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+
+        /* Success message */
+        .success-message {
+            background: #c6f6d5;
+            border: 2px solid #48bb78;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: center;
+            display: none;
+        }
+
+        /* Connection status */
+        .connection-status {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #fc8181;
+        }
+
+        .status-dot.connected {
+            background: #48bb78;
+        }
+
+        @media (max-width: 600px) {
+            .time-location-wrapper {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .nav-tab {
+                font-size: 0.9em;
+                padding: 10px 5px;
+            }
+
+            .connection-status {
+                bottom: 10px;
+                right: 10px;
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="emoji-header">🚨🎮🏆</div>
+        <h1>משחק ניחוש האזעקות</h1>
+        
+        <!-- Navigation -->
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="switchTab('game')">משחק 🎯</button>
+            <button class="nav-tab" onclick="switchTab('history')">היסטוריה 📅</button>
+            <button class="nav-tab" onclick="switchTab('leaderboard')">טבלת שיאים 🏆</button>
+            <button class="nav-tab" onclick="switchTab('settings')">הגדרות ⚙️</button>
+        </div>
+
+        <!-- Game Tab -->
+        <div id="game-tab" class="tab-content active">
+            <div class="date-selector">
+                <h3>בחר תאריך למשחק:</h3>
+                <input type="date" id="game-date" onchange="updateGameDate()">
+            </div>
+
+            <div id="players-container">
+                <!-- Player forms will be generated here -->
+            </div>
+            
+            <button class="btn" onclick="saveGuesses()">שמור ניחושים 💾</button>
+            
+            <div class="success-message" id="success-message">
+                הניחושים נשמרו בהצלחה! 🎯
+            </div>
+            
+            <div class="loading" id="loading" style="display: none;">
+                בודק תוצאות...<span class="spinner"></span>
+            </div>
+            
+            <div id="daily-results" style="margin-top: 30px;">
+                <!-- Daily results will appear here -->
+            </div>
+        </div>
+
+        <!-- History Tab -->
+        <div id="history-tab" class="tab-content">
+            <div class="date-selector">
+                <h3>בחר תאריך:</h3>
+                <input type="date" id="history-date" onchange="loadHistoryForDate()">
+                <button class="btn btn-secondary" style="width: auto; margin: 0 10px;" onclick="checkResults()">בדוק תוצאות</button>
+            </div>
+            <div id="history-container">
+                <div class="empty-state">
+                    <div class="empty-state-icon">📅</div>
+                    <p>בחר תאריך כדי לראות היסטוריה</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Leaderboard Tab -->
+        <div id="leaderboard-tab" class="tab-content">
+            <div id="leaderboard-container">
+                <div class="empty-state">
+                    <div class="empty-state-icon">🏆</div>
+                    <p>אין עדיין נתונים</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div id="settings-tab" class="tab-content">
+            <div class="settings-section">
+                <h3>הגדרות שחקנים 👥</h3>
+                <div id="player-settings">
+                    <!-- Player name inputs will be generated here -->
+                </div>
+                <button class="btn btn-secondary" onclick="savePlayerNames()">שמור שמות</button>
+            </div>
+
+            <div class="settings-section">
+                <h3>מיקומים זמינים 📍</h3>
+                <div id="location-settings">
+                    <!-- Location checkboxes will be generated here -->
+                </div>
+                <div style="margin-top: 15px;">
+                    <input type="text" id="new-location" placeholder="הוסף מיקום חדש...">
+                    <button class="btn btn-secondary" onclick="addLocation()">הוסף מיקום</button>
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h3>הגדרות API 🔧</h3>
+                <div class="form-group">
+                    <label>כתובת שרת:</label>
+                    <input type="text" id="api-server" placeholder="http://localhost:3000" value="">
+                </div>
+                <button class="btn btn-secondary" onclick="saveApiSettings()">שמור הגדרות</button>
+                <button class="btn btn-secondary" onclick="testConnection()">בדוק חיבור</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Connection Status -->
+    <div class="connection-status">
+        <div class="status-dot" id="status-dot"></div>
+        <span id="status-text">מתחבר...</span>
+    </div>
+
+    <!-- Socket.io -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        // Data structure
+        const gameData = {
+            players: [
+                { name: 'שחקן 1', emoji: '🦸' },
+                { name: 'שחקן 2', emoji: '🦹' },
+                { name: 'שחקן 3', emoji: '🧙' },
+                { name: 'שחקן 4', emoji: '👨‍🚀' },
+                { name: 'שחקן 5', emoji: '👩‍🎤' },
+                { name: 'שחקן 6', emoji: '🧑‍🎨' },
+                { name: 'שחקן 7', emoji: '👨‍🔬' }
+            ],
+            locations: ['נחלים', 'ירושלים', 'אשקלון', 'תל אביב', 'חיפה', 'באר שבע', 'נתניה'],
+            apiServer: window.location.origin, // Use current server by default
+            history: {},
+            currentDate: new Date().toISOString().split('T')[0]
+        };
+
+        let socket = null;
+
+        // Initialize Socket.io connection
+        function initializeSocket() {
+            socket = io(gameData.apiServer);
+            
+            socket.on('connect', () => {
+                console.log('Connected to server');
+                updateConnectionStatus(true);
+            });
+            
+            socket.on('disconnect', () => {
+                console.log('Disconnected from server');
+                updateConnectionStatus(false);
+            });
+            
+            socket.on('newAlert', (alert) => {
+                console.log('New alert received:', alert);
+                // Show notification or update UI
+                showNotification(`🚨 אזעקה חדשה: ${alert.location} בשעה ${alert.time}`);
+            });
+        }
+
+        // Update connection status indicator
+        function updateConnectionStatus(connected) {
+            const dot = document.getElementById('status-dot');
+            const text = document.getElementById('status-text');
+            
+            if (connected) {
+                dot.classList.add('connected');
+                text.textContent = 'מחובר';
+            } else {
+                dot.classList.remove('connected');
+                text.textContent = 'מנותק';
+            }
+        }
+
+        // Show notification
+        function showNotification(message) {
+            // You can implement a toast notification here
+            console.log(message);
+        }
+
+        // Load saved data
+        function loadData() {
+            const saved = localStorage.getItem('alarmGameData');
+            if (saved) {
+                Object.assign(gameData, JSON.parse(saved));
+            }
+            
+            // Set API server from saved or use current location
+            if (!gameData.apiServer || gameData.apiServer === 'http://localhost:3000') {
+                gameData.apiServer = window.location.origin;
+            }
+            document.getElementById('api-server').value = gameData.apiServer;
+            
+            // Set current date
+            document.getElementById('game-date').value = gameData.currentDate;
+            document.getElementById('history-date').value = gameData.currentDate;
+            
+            // Initialize socket connection
+            initializeSocket();
+        }
+
+        // Save data
+        function saveData() {
+            localStorage.setItem('alarmGameData', JSON.stringify(gameData));
+        }
+
+        // Switch tabs
+        function switchTab(tabName) {
+            // Update nav
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Update content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+            
+            // Load tab-specific content
+            if (tabName === 'settings') {
+                loadSettings();
+            } else if (tabName === 'leaderboard') {
+                loadLeaderboard();
+            } else if (tabName === 'history') {
+                loadHistoryForDate();
+            }
+        }
+
+        // Generate time options
+        function generateTimeOptions() {
+            const options = [];
+            for (let hour = 20; hour < 24; hour++) {
+                for (let minute = 0; minute < 60; minute += 15) {
+                    const timeStr = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+                    options.push(timeStr);
+                }
+            }
+            for (let hour = 0; hour < 8; hour++) {
+                for (let minute = 0; minute < 60; minute += 15) {
+                    const timeStr = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+                    options.push(timeStr);
+                }
+            }
+            return options;
+        }
+
+        // Initialize player forms
+        function initializePlayers() {
+            const container = document.getElementById('players-container');
+            const timeOptions = generateTimeOptions();
+            container.innerHTML = '';
+            
+            // Get existing guesses for today
+            const todayGuesses = gameData.history[gameData.currentDate]?.guesses || {};
+            
+            gameData.players.forEach((player, index) => {
+                const existingGuess = todayGuesses[index] || {};
+                const playerDiv = document.createElement('div');
+                playerDiv.className = 'player-form';
+                playerDiv.innerHTML = `
+                    <div class="player-name">
+                        ${player.name}
+                        <span class="player-avatar">${player.emoji}</span>
+                    </div>
+                    <div class="time-location-wrapper">
+                        <div class="form-group">
+                            <label>שעת ניחוש:</label>
+                            <select id="time-${index}">
+                                <option value="">בחר שעה</option>
+                                ${timeOptions.map(time => 
+                                    `<option value="${time}" ${existingGuess.time === time ? 'selected' : ''}>${time}</option>`
+                                ).join('')}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>מיקום:</label>
+                            <select id="location-${index}">
+                                <option value="">בחר מיקום</option>
+                                ${gameData.locations.map(loc => 
+                                    `<option value="${loc}" ${existingGuess.location === loc ? 'selected' : ''}>${loc}</option>`
+                                ).join('')}
+                            </select>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(playerDiv);
+            });
+            
+            // Check if we should display results
+            if (gameData.currentDate < new Date().toISOString().split('T')[0]) {
+                checkDailyResults();
+            }
+        }
+
+        // Update game date
+        function updateGameDate() {
+            gameData.currentDate = document.getElementById('game-date').value;
+            saveData();
+            initializePlayers();
+        }
+
+        // Save guesses
+        function saveGuesses() {
+            const guesses = {};
+            let hasGuesses = false;
+            
+            for (let i = 0; i < gameData.players.length; i++) {
+                const time = document.getElementById(`time-${i}`).value;
+                const location = document.getElementById(`location-${i}`).value;
+                
+                if (time && location) {
+                    guesses[i] = {
+                        player: gameData.players[i],
+                        time: time,
+                        location: location
+                    };
+                    hasGuesses = true;
+                }
+            }
+            
+            if (!hasGuesses) {
+                alert('אנא וודא שלפחות שחקן אחד בחר זמן ומיקום');
+                return;
+            }
+            
+            // Initialize history for date if needed
+            if (!gameData.history[gameData.currentDate]) {
+                gameData.history[gameData.currentDate] = {
+                    guesses: {},
+                    alerts: [],
+                    results: null
+                };
+            }
+            
+            gameData.history[gameData.currentDate].guesses = guesses;
+            saveData();
+            
+            // Show success message
+            const successMsg = document.getElementById('success-message');
+            successMsg.style.display = 'block';
+            setTimeout(() => {
+                successMsg.style.display = 'none';
+            }, 3000);
+            
+            // If it's a past date, check results immediately
+            if (gameData.currentDate < new Date().toISOString().split('T')[0]) {
+                checkDailyResults();
+            }
+        }
+
+        // Check daily results
+        async function checkDailyResults() {
+            const dateData = gameData.history[gameData.currentDate];
+            if (!dateData || !dateData.guesses || Object.keys(dateData.guesses).length === 0) {
+                return;
+            }
+            
+            document.getElementById('loading').style.display = 'block';
+            
+            try {
+                const response = await fetch(`${gameData.apiServer}/api/alerts/${gameData.currentDate}`);
+                const alerts = await response.json();
+                
+                if (alerts && alerts.length > 0) {
+                    dateData.alerts = alerts;
+                    calculateDailyResults(gameData.currentDate);
+                    saveData();
+                }
+            } catch (error) {
+                console.error('Error fetching alerts:', error);
+            }
+            
+            document.getElementById('loading').style.display = 'none';
+        }
+
+        // Manual check results
+        async function checkResults() {
+            const date = document.getElementById('history-date').value;
+            if (!date) {
+                alert('אנא בחר תאריך');
+                return;
+            }
+            
+            gameData.currentDate = date;
+            await checkDailyResults();
+            loadHistoryForDate();
+        }
+
+        // Calculate results for a specific date
+        function calculateDailyResults(date) {
+            const dateData = gameData.history[date];
+            if (!dateData || !dateData.alerts || dateData.alerts.length === 0) return;
+            
+            const playerScores = {};
+            
+            // Calculate score for each alert
+            dateData.alerts.forEach(alert => {
+                Object.entries(dateData.guesses).forEach(([playerIndex, guess]) => {
+                    if (!playerScores[playerIndex]) {
+                        playerScores[playerIndex] = {
+                            player: guess.player,
+                            totalScore: 0,
+                            correctLocations: 0,
+                            perfectGuesses: 0,
+                            alertScores: []
+                        };
+                    }
+                    
+                    let score = 0;
+                    
+                    // Location match (50 points)
+                    if (guess.location === alert.location) {
+                        score += 50;
+                        playerScores[playerIndex].correctLocations++;
+                    }
+                    
+                    // Time proximity (up to 50 points)
+                    const guessMinutes = timeToMinutes(guess.time);
+                    const alertMinutes = timeToMinutes(alert.time);
+                    const timeDiff = Math.abs(guessMinutes - alertMinutes);
+                    const adjustedDiff = Math.min(timeDiff, 1440 - timeDiff);
+                    const timeScore = Math.max(0, 50 - (adjustedDiff / 15) * 10);
+                    score += Math.round(timeScore);
+                    
+                    if (score === 100) {
+                        playerScores[playerIndex].perfectGuesses++;
+                    }
+                    
+                    playerScores[playerIndex].totalScore += score;
+                    playerScores[playerIndex].alertScores.push({
+                        alert: alert,
+                        score: score,
+                        timeDiff: adjustedDiff
+                    });
+                });
+            });
+            
+            // Sort by total score
+            const sortedScores = Object.values(playerScores).sort((a, b) => b.totalScore - a.totalScore);
+            
+            dateData.results = {
+                scores: sortedScores,
+                winner: sortedScores[0]
+            };
+            
+            displayDailyResults(dateData);
+        }
+
+        // Display daily results
+        function displayDailyResults(dateData) {
+            const container = document.getElementById('daily-results');
+            
+            if (!dateData.results) {
+                container.innerHTML = '';
+                return;
+            }
+            
+            let html = `
+                <div class="alert-display">
+                    <h3>🚨 אזעקות שהיו היום 🚨</h3>
+                    ${dateData.alerts.map(alert => `
+                        <div class="alert-item">
+                            <span>⏰ ${alert.time}</span>
+                            <span>📍 ${alert.location}</span>
+                        </div>
+                    `).join('')}
+                </div>
+                
+                <div class="history-item">
+                    <div class="winner-info">
+                        <span>🏆 המנצח: ${dateData.results.winner.player.emoji} ${dateData.results.winner.player.name}</span>
+                        <span class="total-score">${dateData.results.winner.totalScore} נקודות</span>
+                    </div>
+                    
+                    <h4 style="margin-top: 20px; margin-bottom: 10px;">דירוג מלא:</h4>
+                    ${dateData.results.scores.map((score, index) => `
+                        <div class="leaderboard-item">
+                            <span class="rank">#${index + 1}</span>
+                            <div class="player-info">
+                                <span class="player-avatar">${score.player.emoji}</span>
+                                <span>${score.player.name}</span>
+                            </div>
+                            <div style="text-align: left;">
+                                <div class="total-score">${score.totalScore} נקודות</div>
+                                <small style="color: #718096;">
+                                    ${score.correctLocations} מיקומים נכונים | 
+                                    ${score.perfectGuesses} ניחושים מושלמים
+                                </small>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            
+            container.innerHTML = html;
+        }
+
+        // Time conversion helper
+        function timeToMinutes(timeStr) {
+            const [hours, minutes] = timeStr.split(':').map(Number);
+            return hours * 60 + minutes;
+        }
+
+        // Load history for specific date
+        function loadHistoryForDate() {
+            const date = document.getElementById('history-date').value;
+            const container = document.getElementById('history-container');
+            
+            if (!date || !gameData.history[date]) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📅</div>
+                        <p>אין נתונים לתאריך זה</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const dateData = gameData.history[date];
+            
+            if (!dateData.results) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">⏳</div>
+                        <p>ממתין לתוצאות...</p>
+                        <button class="btn btn-secondary" style="margin-top: 20px; width: auto;" onclick="checkResults()">בדוק עכשיו</button>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = `
+                <div class="history-item">
+                    <div class="history-date">📅 ${new Date(date).toLocaleDateString('he-IL')}</div>
+                    
+                    <div class="alert-display" style="margin-bottom: 20px;">
+                        <h4>אזעקות שהיו:</h4>
+                        ${dateData.alerts.map(alert => `
+                            <div class="alert-item">
+                                <span>⏰ ${alert.time}</span>
+                                <span>📍 ${alert.location}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    
+                    <div class="winner-info">
+                        <span>🏆 המנצח: ${dateData.results.winner.player.emoji} ${dateData.results.winner.player.name}</span>
+                        <span class="total-score">${dateData.results.winner.totalScore} נקודות</span>
+                    </div>
+                    
+                    <h4 style="margin-top: 20px; margin-bottom: 10px;">דירוג מלא:</h4>
+                    ${dateData.results.scores.map((score, index) => `
+                        <div class="leaderboard-item">
+                            <span class="rank">#${index + 1}</span>
+                            <div class="player-info">
+                                <span class="player-avatar">${score.player.emoji}</span>
+                                <span>${score.player.name}</span>
+                            </div>
+                            <div style="text-align: left;">
+                                <div class="total-score">${score.totalScore} נקודות</div>
+                                <small style="color: #718096;">
+                                    ${score.correctLocations} מיקומים נכונים | 
+                                    ${score.perfectGuesses} ניחושים מושלמים
+                                </small>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // Load leaderboard
+        function loadLeaderboard() {
+            const container = document.getElementById('leaderboard-container');
+            const allPlayers = {};
+            
+            // Aggregate scores across all dates
+            Object.entries(gameData.history).forEach(([date, dateData]) => {
+                if (dateData.results && dateData.results.scores) {
+                    dateData.results.scores.forEach(score => {
+                        const playerName = score.player.name;
+                        if (!allPlayers[playerName]) {
+                            allPlayers[playerName] = {
+                                player: score.player,
+                                totalScore: 0,
+                                gamesPlayed: 0,
+                                wins: 0,
+                                perfectGuesses: 0
+                            };
+                        }
+                        
+                        allPlayers[playerName].totalScore += score.totalScore;
+                        allPlayers[playerName].gamesPlayed++;
+                        allPlayers[playerName].perfectGuesses += score.perfectGuesses || 0;
+                        
+                        // Check if this player won this day
+                        if (dateData.results.winner.player.name === playerName) {
+                            allPlayers[playerName].wins++;
+                        }
+                    });
+                }
+            });
+            
+            // Sort by total score
+            const sortedPlayers = Object.values(allPlayers).sort((a, b) => b.totalScore - a.totalScore);
+            
+            if (sortedPlayers.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🏆</div>
+                        <p>אין עדיין נתונים</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = `
+                <h3 style="text-align: center; margin-bottom: 30px;">🏆 טבלת השיאים הכללית 🏆</h3>
+                ${sortedPlayers.map((player, index) => {
+                    let medal = '';
+                    if (index === 0) medal = '🥇';
+                    else if (index === 1) medal = '🥈';
+                    else if (index === 2) medal = '🥉';
+                    
+                    return `
+                        <div class="leaderboard-item" style="${index < 3 ? 'background: #fffbeb;' : ''}">
+                            <span class="rank">${medal || `#${index + 1}`}</span>
+                            <div class="player-info">
+                                <span class="player-avatar">${player.player.emoji}</span>
+                                <span>${player.player.name}</span>
+                            </div>
+                            <div style="text-align: left;">
+                                <div class="total-score">${player.totalScore} נקודות</div>
+                                <small style="color: #718096;">
+                                    ${player.gamesPlayed} משחקים | 
+                                    ${player.wins} ניצחונות | 
+                                    ${player.perfectGuesses} ניחושים מושלמים
+                                </small>
+                            </div>
+                        </div>
+                    `;
+                }).join('')}
+            `;
+        }
+
+        // Load settings
+        function loadSettings() {
+            // Player names
+            const playerContainer = document.getElementById('player-settings');
+            playerContainer.innerHTML = gameData.players.map((player, index) => `
+                <div class="form-group">
+                    <label>${player.emoji} שחקן ${index + 1}:</label>
+                    <input type="text" id="player-name-${index}" value="${player.name}" placeholder="שם השחקן">
+                </div>
+            `).join('');
+            
+            // Locations
+            const locationContainer = document.getElementById('location-settings');
+            locationContainer.innerHTML = gameData.locations.map((location, index) => `
+                <div class="location-item">
+                    <input type="checkbox" id="location-${index}" checked>
+                    <label for="location-${index}">${location}</label>
+                    <button class="btn btn-danger" onclick="removeLocation(${index})">הסר</button>
+                </div>
+            `).join('');
+            
+            // API settings
+            document.getElementById('api-server').value = gameData.apiServer;
+        }
+
+        // Save player names
+        function savePlayerNames() {
+            gameData.players.forEach((player, index) => {
+                const newName = document.getElementById(`player-name-${index}`).value;
+                if (newName.trim()) {
+                    player.name = newName.trim();
+                }
+            });
+            
+            saveData();
+            alert('השמות נשמרו בהצלחה! 👥');
+            initializePlayers();
+        }
+
+        // Add location
+        function addLocation() {
+            const newLocation = document.getElementById('new-location').value.trim();
+            if (newLocation && !gameData.locations.includes(newLocation)) {
+                gameData.locations.push(newLocation);
+                saveData();
+                document.getElementById('new-location').value = '';
+                loadSettings();
+                initializePlayers();
+            }
+        }
+
+        // Remove location
+        function removeLocation(index) {
+            if (gameData.locations.length > 1) {
+                gameData.locations.splice(index, 1);
+                saveData();
+                loadSettings();
+                initializePlayers();
+            } else {
+                alert('חייב להיות לפחות מיקום אחד');
+            }
+        }
+
+        // Save API settings
+        function saveApiSettings() {
+            gameData.apiServer = document.getElementById('api-server').value.trim() || window.location.origin;
+            saveData();
+            alert('הגדרות API נשמרו בהצלחה! 🔧');
+            
+            // Reconnect socket with new server
+            if (socket) {
+                socket.disconnect();
+            }
+            initializeSocket();
+        }
+
+        // Test connection to server
+        async function testConnection() {
+            try {
+                const response = await fetch(`${gameData.apiServer}/api/health`);
+                const data = await response.json();
+                
+                if (data.status === 'ok') {
+                    alert('✅ החיבור לשרת תקין!');
+                } else {
+                    alert('❌ בעיה בחיבור לשרת');
+                }
+            } catch (error) {
+                alert('❌ לא ניתן להתחבר לשרת: ' + error.message);
+            }
+        }
+
+        // Initialize on load
+        window.addEventListener('DOMContentLoaded', () => {
+            loadData();
+            initializePlayers();
+            
+            // Auto-save when leaving page
+            window.addEventListener('beforeunload', saveData);
+            
+            // Check for updates every minute if on current date
+            setInterval(() => {
+                if (gameData.currentDate === new Date().toISOString().split('T')[0]) {
+                    checkDailyResults();
+                }
+            }, 60000);
+        });
+    </script>
+</body>
+</html>
