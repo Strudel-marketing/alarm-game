@@ -9,11 +9,17 @@ const PORT = process.env.PORT || 3000;
 const DATA_DIR = path.join(__dirname, 'data');
 const ALERTS_FILE = path.join(DATA_DIR, 'alerts.json');
 const PROCESSED_FILE = path.join(DATA_DIR, 'processed_alerts.json');
+const GAME_DATA_FILE = path.join(DATA_DIR, 'game_data.json');
 const SAMPLE_API = path.join(__dirname, 'sample_api_response.json');
 
 function ensureDataDir() {
   if (!fs.existsSync(DATA_DIR)) {
     fs.mkdirSync(DATA_DIR, { recursive: true });
+  }
+  for (const file of [ALERTS_FILE, PROCESSED_FILE, GAME_DATA_FILE]) {
+    if (!fs.existsSync(file)) {
+      fs.writeFileSync(file, JSON.stringify({}));
+    }
   }
 }
 
@@ -118,6 +124,30 @@ function handleRequest(req, res) {
   if (req.method === 'POST' && url.pathname === '/api/check-now') {
     processAlerts();
     return res.end(JSON.stringify({ success: true }));
+  }
+
+  if (req.method === 'GET' && url.pathname === '/api/gameData') {
+    const data = loadData(GAME_DATA_FILE);
+    return res.end(JSON.stringify(data));
+  }
+
+  if (req.method === 'POST' && url.pathname === '/api/gameData') {
+    let body = '';
+    req.on('data', chunk => {
+      body += chunk;
+      if (body.length > 1e6) req.connection.destroy();
+    });
+    req.on('end', () => {
+      try {
+        const data = JSON.parse(body || '{}');
+        saveData(GAME_DATA_FILE, data);
+        res.end(JSON.stringify({ success: true }));
+      } catch (err) {
+        res.writeHead(400);
+        res.end(JSON.stringify({ success: false, error: err.message }));
+      }
+    });
+    return;
   }
 
   if (req.method === 'GET' && url.pathname === '/api/health') {
