@@ -1,53 +1,23 @@
-markdown# משחק ניחוש האזעקות 🚨🎮
+# Alarm Game 🚨🎮
 
-משחק מהנה לילדים לנחש מתי תהיה האזעקה הבאה!
+Demo server for guessing the next alarm. This version runs without external npm
+packages and uses a local sample API response.
 
-## 🚀 התחלה מהירה
+## Quick Start
 
-### הרצה מקומית:
 ```bash
-npm install
 npm start
-הרצה עם Docker:
-bashdocker-compose up -d
-📊 API Endpoints
+```
 
-GET /api/alerts/:date - אזעקות לתאריך מסוים
-GET /api/stats - סטטיסטיקות
-GET /api/debug - בדיקת מבנה ה-API
-GET /api/health - בדיקת תקינות
+Open <http://localhost:3000> to view the game.
 
-🎮 איך לשחק
+## API Endpoints
 
-כל ילד בוחר שעה ומיקום
-שומרים את הניחושים
-בבוקר בודקים מי ניצח!
+- `GET /api/alerts/:date` – alerts for a specific date
+- `GET /api/stats` – statistics
+- `GET /api/debug` – show the sample API response
+- `GET /api/health` – health status
+- `POST /api/check-now` – process the sample alerts
 
-📱 תכונות
-
-7 שחקנים
-ניחוש זמן ומיקום
-היסטוריה יומית
-טבלת שיאים כללית
-הגדרות דינמיות
-
-🔧 טכנולוגיות
-
-Node.js + Express
-Socket.io לעדכונים בזמן אמת
-Prog API לנתוני אזעקות
-Docker לפריסה קלה
-
-
-## 🚀 העלאה ל-GitHub
-
-```bash
-# יצירת repository חדש
-git init
-git add .
-git commit -m "Initial commit - Alarm Game with Prog API"
-
-# יצירת repo ב-GitHub ואז:
-git remote add origin https://github.com/YOUR_USERNAME/alarm-game-prog.git
-git branch -M main
-git push -u origin main
+Alerts are taken from `sample_api_response.json` and stored in the `data`
+folder that is created on first run.
